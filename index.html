@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Concordance Chain — Policy Harmonization Protocol</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080810;--surface:#0f0f1a;--border:#1a1a2e;--text:#d4d0c8;--muted:#5a5a6e;--amber:#c9a84c;--cyan:#4ab8d4;--red:#c45050;--green:#58b87a;--font:'Courier New',monospace}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;padding:20px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.emoji{font-size:28px}h1{font-size:18px;color:var(--amber)}
+.sub{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+.badge{background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:4px;font-size:9px;color:var(--cyan)}
+.main-grid{display:grid;grid-template-columns:1fr;gap:20px}
+@media(min-width:900px){.main-grid{grid-template-columns:380px 1fr}}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px}
+.ptitle{font-size:11px;color:var(--amber);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.row{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+input,textarea,select{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:6px;font-family:var(--font);font-size:12px;width:100%;outline:none;transition:border-color 0.2s}
+input:focus,select:focus,textarea:focus{border-color:var(--amber)}
+textarea{resize:vertical;min-height:70px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:6px;font-family:var(--font);font-size:12px;cursor:pointer;border:none;transition:all 0.15s}
+.btn-primary{background:var(--amber);color:#080810;font-weight:bold}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-secondary{background:var(--border);color:var(--text)}
+.btn-secondary:hover{background:#252540}
+.metrics{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.metric{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px 14px;text-align:center;flex:1;min-width:110px}
+.metric-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.metric-val{font-size:20px;font-weight:bold;color:var(--amber)}
+.policy-card{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px;margin-bottom:6px}
+.policy-card:hover{border-color:var(--cyan)}
+.policy-name{font-size:12px;color:var(--cyan);font-weight:bold;margin-bottom:6px}
+.policy-row{display:flex;justify-content:space-between;padding:3px 0;font-size:10px}
+.policy-key{color:var(--muted)}
+.policy-val{color:var(--text);font-family:var(--font)}
+.link-item{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--border)/30;font-size:10px}
+.link-arrow{color:var(--muted)}
+.link-from{color:var(--cyan)}
+.link-to{color:var(--amber)}
+.link-fields{color:var(--muted);margin-left:auto;font-size:9px}
+.log-box{background:#000;border:1px solid var(--border);border-radius:6px;padding:10px;font-size:10px;color:var(--green);max-height:180px;overflow-y:auto;font-family:var(--font);line-height:1.6}
+.log-box .err{color:var(--red)}.log-box .warn{color:var(--amber)}.log-box .info{color:var(--cyan)}.log-box .ok{color:var(--green)}
+.sync-btn{background:var(--border);border:1px solid var(--cyan);color:var(--cyan);padding:5px 10px;border-radius:4px;font-size:10px;cursor:pointer}
+.sync-btn:hover{background:var(--cyan);color:#080810}
+.band-gold{color:var(--amber);font-weight:bold}
+.band-azure{color:var(--cyan);font-weight:bold}
+.band-sub{color:var(--red)}
+</style>
+</head>
+<body>
+<header>
+  <span class="emoji">⛓️</span>
+  <div><h1>Concordance Chain</h1><div class="sub">Policy Harmonization Protocol · v5.4.0</div></div>
+  <div class="badge">μ ≥ 0.9995</div>
+</header>
+
+<div class="main-grid">
+  <div class="left-col">
+    <div class="panel">
+      <div class="ptitle">🎯 Resonance Band</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">μ Concordance</div><div class="metric-val" id="mu-conc">0.999872</div></div>
+        <div class="metric"><div class="metric-label">Drift Count</div><div class="metric-val" id="drift-cnt" style="color:var(--green)">0</div></div>
+        <div class="metric"><div class="metric-label">State</div><div class="metric-val" id="chain-state" style="font-size:16px;color:var(--green)">ALIGNED</div></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div style="font-size:10px;color:var(--muted)">Simulate resonance:</div>
+        <button class="sync-btn" onclick="setResonance(0.9999)">Gold</button>
+        <button class="sync-btn" onclick="setResonance(0.9996)">Azure</button>
+        <button class="sync-btn" onclick="setResonance(0.9990)">Sub</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ptitle">🔗 Policy Links (3 chains)</div>
+      <div class="link-item"><span class="link-from">mantra_policy</span><span class="link-arrow">→</span><span class="link-to">synthesis + dominion</span><span class="link-fields">gold, azure, silence_below</span></div>
+      <div class="link-item"><span class="link-from">synthesis</span><span class="link-arrow">→</span><span class="link-to">mantra + dominion</span><span class="link-fields">coherence_min, health_min</span></div>
+      <div class="link-item"><span class="link-from">dominion</span><span class="link-arrow">→</span><span class="link-to">synthesis</span><span class="link-fields" style="color:var(--muted)">advise only</span></div>
+    </div>
+
+    <div class="panel">
+      <div class="ptitle">⚙️ Run Harmonizer</div>
+      <button class="btn btn-primary" onclick="runHarmonize()" style="margin-bottom:10px">⟳ Run Harmonization</button>
+      <button class="btn btn-secondary" onclick="runWatch()">⟳ Watch Mode (live)</button>
+    </div>
+  </div>
+
+  <div class="right-col">
+    <div class="panel">
+      <div class="ptitle">📋 Policy Registry (3 policies)</div>
+      <div id="policies"></div>
+    </div>
+    <div class="panel">
+      <div class="ptitle">📜 Sync History (last 5)</div>
+      <div id="history" class="log-box"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const policies = {
+  mantra_policy: {version:"5.4.0",updated_at:"2026-05-15T08:00:00Z",thresholds:{gold:0.9999,azure:0.9995,silence_below:0.9995},phrases:{gold:["Truth endures","Gold ripple eternal"],azure:["Resonance aligns","Azure coherence holds"],silence:["Below threshold — silence maintained"]}},
+  synthesis_policy: {version:"5.4.0",updated_at:"2026-05-15T07:55:00Z",thresholds:{coherence_min:0.9997,health_min:0.9995,epoch_window_s:30}},
+  dominion_state: {version:"5.4.0",updated_at:"2026-05-15T07:50:00Z",μ_coherence:0.9998,rejoins:0,status:"STABLE"},
+};
+
+let muConcordance = 0.999872;
+let driftCount = 0;
+let watchMode = false;
+let logEntries = [];
+
+function renderPolicies() {
+  const el = document.getElementById('policies');
+  el.innerHTML = Object.entries(policies).map(([name, data]) => {
+    const fields = Object.entries(data).filter(([k])=>k!=='version'&&k!=='updated_at').map(([k,v])=>`<div class="policy-row"><span class="policy-key">${k}</span><span class="policy-val">${typeof v==='object'?JSON.stringify(v):v}</span></div>`).join('');
+    return `<div class="policy-card"><div class="policy-name">${name}.json</div>${fields}</div>`;
+  }).join('');
+}
+
+function log(msg, type='info') {
+  logEntries.push({ts:new Date().toISOString(), msg, type});
+  if(logEntries.length > 50) logEntries.shift();
+  renderLog();
+}
+
+function renderLog() {
+  const el = document.getElementById('history');
+  el.innerHTML = logEntries.slice(-8).map(e => {
+    const cls = e.type !== 'info' ? e.type : '';
+    return `<div class="${cls}">[${e.ts.split('T')[1].slice(0,8)}] ${e.msg}</div>`;
+  }).join('');
+}
+
+function setResonance(val) {
+  policies.dominion_state.μ_coherence = val;
+  policies.dominion_state.updated_at = new Date().toISOString();
+  const band = val >= 0.9999 ? 'GOLD' : val >= 0.9995 ? 'AZURE' : 'SUB-AZURE';
+  document.getElementById('chain-state').textContent = val >= 0.9995 ? 'ALIGNED' : val >= 0.99 ? 'DRIFTING' : 'DESYNCED';
+  document.getElementById('chain-state').style.color = val >= 0.9995 ? 'var(--green)' : val >= 0.99 ? 'var(--amber)' : 'var(--red)';
+  document.getElementById('mu-conc').textContent = muConcordance.toFixed(6);
+  renderPolicies();
+  log(`Resonance set to ${val} → band: ${band}`, 'info');
+}
+
+function runHarmonize() {
+  log('Harmonizer started...', 'info');
+  
+  // Simulate harmonization: sync thresholds across policies
+  const gold = policies.mantra_policy.thresholds.gold;
+  const azure = policies.mantra_policy.thresholds.azure;
+  
+  // Propagate to synthesis
+  policies.synthesis_policy.thresholds.coherence_min = Math.min(gold + 0.0002, 0.9999);
+  
+  // Propagate to dominion
+  policies.dominion_state.μ_coherence = gold - 0.0001;
+  
+  // Update timestamps
+  const now = new Date().toISOString();
+  Object.keys(policies).forEach(k => { policies[k].updated_at = now; });
+  
+  // Recalculate concordance
+  const avg = (policies.mantra_policy.thresholds.gold + policies.synthesis_policy.thresholds.coherence_min + policies.dominion_state.μ_coherence) / 3;
+  muConcordance = avg;
+  driftCount = Math.random() < 0.1 ? driftCount + 1 : 0;
+  
+  document.getElementById('mu-conc').textContent = muConcordance.toFixed(6);
+  document.getElementById('drift-cnt').textContent = driftCount;
+  document.getElementById('chain-state').textContent = muConcordance >= 0.9995 ? 'ALIGNED' : 'DRIFTING';
+  document.getElementById('chain-state').style.color = muConcordance >= 0.9995 ? 'var(--green)' : 'var(--amber)';
+  
+  renderPolicies();
+  log(`Sync complete — μ_conc=${muConcordance.toFixed(6)} drift=${driftCount}`, 'ok');
+}
+
+function runWatch() {
+  watchMode = !watchMode;
+  log(watchMode ? 'Watch mode ON — monitoring .forge for changes' : 'Watch mode OFF', watchMode ? 'warn' : 'info');
+}
+
+renderPolicies();
+log('Concordance Chain v5.4.0 initialized', 'info');
+</script>
+</body>
+</html>
